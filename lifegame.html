@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Life Game</title>
+        <meta charset='utf-8'>
+        <script  type="text/javascript" src="lifegame.js"></script>
+    </head>
+    <body>
+        <center>
+            <h2>生命游戏</h2>
+        <canvas id="canvas" width="602" height="602"></canvas>
+        <script  type="text/javascript" src="fabric.min.js"></script>
+        <div style="margin:20px 50px 20px;padding-bottom:10px;border-bottom:1px solid #c1c1c1;text-align:center;width:502px">
+            <input type="button" value="重新开始" style="width:70px;" onclick="javascript:restartLifeGame()">
+            大小：<input type="text" value="50" id="lifeSize" style="width:50px;margin-right:20px;">
+            剩余生命：<span id="remainLifes" style="display:inline-block;width:50px;">0</span>
+            进化次数：<span id="period" style="display:inline-block;width:40px;">0</span>
+        </div>
+    </center>
+        <script>
+            var life;
+            var lifeTimer = 0;
+            var canvas = new fabric.Canvas('canvas');
+            canvas.renderOnAddRemove = false;
+            var lifes = [];
+
+            restartLifeGame();
+            function initLifeGame()
+            {
+                var rect = new fabric.Rect({
+                    top : 0,
+                    left : 0,
+                    width : 600,
+                    height : 600,
+                    fill : 'white',
+                    selectable: false, 
+                    strokeWidth: 1,
+                    stroke: '#C1C1C1'
+
+                });
+                canvas.add(rect);
+                canvas.renderAll();
+            }
+
+            function restartLifeGame()
+            {
+                var size = parseInt(document.getElementById('lifeSize').value);
+                if (isNaN(size) || size <= 0) {
+                    alert('请输入正确数值');
+                    return;
+                }
+
+                if (lifeTimer != 0)
+                    clearInterval(lifeTimer);
+                canvas.clear();
+                initLifeGame();
+                beginLife(size, size);
+            }
+
+            function beginLife(row,col)
+            {
+                life = new LifeGame(row,col);
+                life.initRandom(20);
+                  var width  = 600/life.col;
+                  var height = 600/life.row;
+                  for(var i=0;i<life.row;i++) {
+                      lifes[i] = [];
+                      for(var j=0;j<life.col;j++) {
+                        lifes[i][j] = new fabric.Rect({
+                            top:    i*height,
+                            left:   j*width,
+                            width:  width,
+                            height: height,
+                            fill:   'black',
+                            selectable: false,
+                            stroke: 'rgba(100,200,200,0.5)',
+                            strokeWidth: 1,
+                            visible:    false
+                        });
+                        canvas.add(lifes[i][j]);
+                      }
+                  }
+                refreshLife(); 
+                lifeTimer = setInterval(refreshLife, 300);
+            }
+
+            function refreshLife()
+            {
+                drawLife();
+                document.getElementById('remainLifes').innerText = life.remainLifes;
+                document.getElementById('period').innerText = life.period;
+                life.nextAround();
+            }
+
+            function drawLife()
+            {
+                for(var i=0;i<life.row;i++) {
+                    for(var j=0;j<life.col;j++) {
+                        if (life.isAlive(i,j))  {
+                           lifes[i][j].visible = true;
+                        } else {
+                           lifes[i][j].visible = false;
+                        }
+                    }
+                }
+                canvas.renderAll();
+            }
+
+
+            function pauseLife()
+            {
+                clearInterval(lifeTimer);
+            }
+
+        </script>
+</body>
+</html>
