@@ -61,14 +61,14 @@
             {
                 life = new LifeGame(row,col);
                 life.initRandom(20);
-                  var width  = 600/life.col;
-                  var height = 600/life.row;
+                  var width  = 600/life.row;
+                  var height = 600/life.col;
                   for(var i=0;i<life.row;i++) {
                       lifes[i] = [];
                       for(var j=0;j<life.col;j++) {
                         lifes[i][j] = new fabric.Rect({
-                            top:    i*height,
-                            left:   j*width,
+                            left:   i*width,
+                            top:    j*height,
                             width:  width,
                             height: height,
                             fill:   'black',
